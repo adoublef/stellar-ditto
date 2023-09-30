@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+</head>
+
+<body>
+    <sample-uploader>
+        <template shadowRootMode="open">
+            <form>
+                <input type="file" name="file" id="file">
+                <button type="submit">upload</button>
+            </form>
+        </template>
+    </sample-uploader>
+    <hr>
+    <sample-player src="file:///kick.wav">
+        <template shadowRootMode="open">
+            <button>play</button>
+        </template>
+    </sample-player>
+    <script>
+        (function attachShadowRoots(root) {
+            root.querySelectorAll("template[shadowrootmode]").forEach(template => {
+                const mode = template.getAttribute("shadowrootmode");
+                const shadowRoot = template.parentNode.attachShadow({ mode });
+                shadowRoot.appendChild(template.content);
+                template.remove();
+                attachShadowRoots(shadowRoot);
+            });
+        })(document);
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
