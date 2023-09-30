@@ -6,6 +6,29 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+    
+        .box {
+            border: 3px solid #666;
+            background-color: #ddd;
+            border-radius: .5em;
+            padding: 10px;
+            cursor: move;
+        }
+    
+        .box.over {
+            border: 3px dotted #666;
+        }
+    
+        [draggable] {
+            user-select: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -15,12 +38,16 @@
                 <input type="file" name="file" id="file">
                 <button type="submit">upload</button>
             </form>
+            <hr>
+            <slot name="library"></slot>
         </template>
+        <!-- <div slot="library" draggable="true" data-src="file:///kick.wav">kick</div> -->
     </sample-uploader>
     <hr>
-    <sample-player src="file:///kick.wav">
+    <hr>
+    <sample-player>
         <template shadowRootMode="open">
-            <button>play</button>
+            <button>sample</button>
         </template>
     </sample-player>
     <script>

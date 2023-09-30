@@ -41,16 +41,15 @@ export function loadable<
                 value !== null &&
                 value !== oldValue
             ) {
-                this.#load();
+                const url = parseUrl(value);
+                this.#load(url);
             }
 
             super.attributeChangedCallback?.(name, oldValue, value);
         }
 
-        async #load() {
+        async #load(url: URL) {
             this.dispatchEvent(new Event("loadstart"));
-
-            const url = parseUrl(this.src);
             try {
                 const response = await fetchResource(url);
                 this.dispatchEvent(new Event("load"));
@@ -99,9 +98,17 @@ async function fetchResource(url: URL): Promise<Response> {
         assert(url.protocol, "file:")
     ) {
         // TODO -- origin private file system 
-        const [_slash, ...src] = (decodeURI(new URL(url).pathname));
+        const [, ...src] = (decodeURI(new URL(url).pathname));
         const file = await proxy.fetch(src.join(""));
-        return new Response(file);
+
+        // res.setHeader('Cache-Control', 'public, max-age=3600');
+        const headers = new Headers([
+            ["Content-Type", file.type],
+            ["Content-Length", file.size.toString()],
+            ["Content-Disposition", `attachment; filename="${file.name}"`]
+        ]);
+
+        return new Response(file, { headers });
     }
 
     throw new Error(`unsupported protocol ${url.protocol}`);

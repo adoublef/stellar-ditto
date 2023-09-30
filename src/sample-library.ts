@@ -7,8 +7,9 @@ export class SampleLibrary {
                 .storage
                 .getDirectory();
 
+            const filename = encodeURI((opts?.filename ?? f.name).toLocaleLowerCase())
             const draftFile = await root
-                .getFileHandle(encodeURI((opts?.filename ?? f.name).toLocaleLowerCase()), { create: true });
+                .getFileHandle(filename, { create: true });
 
             const accessHandle = await draftFile
                 .createSyncAccessHandle();
@@ -21,6 +22,7 @@ export class SampleLibrary {
             // persist changes to disk
             accessHandle.flush();
 
+            // NOTE -- should go in a finally block
             accessHandle.close();
 
             return size;
@@ -36,15 +38,16 @@ export class SampleLibrary {
                 .storage
                 .getDirectory();
 
-            const fileNames = [];
+            const srcs = [];
             for await (const handle of root.values()) {
                 if (handle.kind === "file") {
                     // get file
-                    fileNames.push(handle.name);
+                    const href = new URL(handle.name, "file://").href;
+                    srcs.push(href);
                 }
             }
 
-            return fileNames;
+            return srcs;
         } catch (error) {
             // @ts-expect-error
             throw new Error(`failed to read directory: ${error.message}`);
