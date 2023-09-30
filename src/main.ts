@@ -1,3 +1,4 @@
+import { loadable } from "./loadable";
 import SampleLibrary from "./sample-library.ts?worker";
 import { wrap } from "comlink";
 
@@ -33,26 +34,22 @@ class SampleUploader extends HTMLElement {
 }
 customElements.define("sample-uploader", SampleUploader);
 
+const audioContext = new AudioContext();
+
+@loadable
 class SamplePlayer extends HTMLElement {
     declare cta: HTMLButtonElement;
 
-    src = "";
+    declare buffer: AudioBuffer;
 
-    static get observedAttributes(): string[] {
-        return ["src"];
+    async load(response: Response): Promise<void> {
+        const arrayBuffer = await response.arrayBuffer();
+        this.buffer = await audioContext.decodeAudioData(arrayBuffer);
     }
 
     #play = async () => {
-        // src cannot be empty
-        if (!this.src) return;
-
-        const [_slash, ...src] = (decodeURI(new URL(this.src).pathname));
         try {
-            const file = await proxy.play(src.join(""));
-            const audioContext = new AudioContext();
-            const fileData = await file.arrayBuffer();
-            const buffer = await audioContext.decodeAudioData(fileData);
-
+            const buffer = this.buffer
             const source = new AudioBufferSourceNode(audioContext, { buffer });
 
             source.connect(audioContext.destination);
@@ -66,19 +63,6 @@ class SamplePlayer extends HTMLElement {
     connectedCallback() {
         this.cta = this.#query("button");
         this.cta.onclick = this.#play;
-    }
-
-    attributeChangedCallback(
-        name: string,
-        _oldValue: string | null,
-        value: string | null,
-    ) {
-        if (
-            name === "src" &&
-            !!value
-        ) {
-            this.src = value;
-        }
     }
 
     #query<T extends HTMLElement>(selector: string): T {

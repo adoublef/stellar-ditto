@@ -51,7 +51,7 @@ export class SampleLibrary {
         }
     }
 
-    async play(src: string): Promise<File> {
+    async fetch(src: string): Promise<File> {
         try {
             const root = await navigator
                 .storage
