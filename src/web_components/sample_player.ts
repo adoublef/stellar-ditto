@@ -16,7 +16,7 @@ export class SamplePlayer extends HTMLElement {
         if (
             filename
         ) {
-            this.cta.innerText = filename;
+            this.cta.innerText = (filename);
         }
     }
 
@@ -61,7 +61,7 @@ function parseContentDisposition(response: Response) {
     const contentDisposition = response.headers.get("content-disposition");
     const matches = /filename="([^"]+)"/.exec(contentDisposition ?? "");
     if (matches && matches.length > 1) {
-        return matches[1];
+        return decodeURI(matches[1]);
     }
     return null;
 }

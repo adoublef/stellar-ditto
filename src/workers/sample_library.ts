@@ -7,7 +7,8 @@ export class SampleLibrary {
                 .storage
                 .getDirectory();
 
-            const filename = encodeURI((opts?.filename ?? f.name).toLocaleLowerCase())
+            const filename = encodeURI((opts?.filename ?? f.name).toLowerCase());
+            console.log(filename)
             const draftFile = await root
                 .getFileHandle(filename, { create: true });
 
@@ -61,7 +62,7 @@ export class SampleLibrary {
                 .getDirectory();
 
             const fileHandle = await root
-                .getFileHandle(src);
+                .getFileHandle(encodeURI(src));
 
             const f = await fileHandle.getFile();
 

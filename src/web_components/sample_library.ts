@@ -17,8 +17,10 @@ export class SampleLibrary extends HTMLElement {
         const { file } = Object.fromEntries(formData) as { file: File; };
         // save file with webWorker
         if (file.size) {
-            const bytes = await proxy.save(file, { filename: "kick.wav" });
+            const bytes = await proxy.save(file);
             alert(`success writing ${bytes} bytes to file`);
+            // NOTE -- this is kinda wasteful
+            this.#renderList()
         }
     };
 
@@ -31,7 +33,6 @@ export class SampleLibrary extends HTMLElement {
                 @dragstart=${(e: DragEvent) => e.dataTransfer?.setData("text/plain", src)} 
                 draggable="true" 
                 slot="library" 
-                data-src="${src}"
             >
                 ${rest.join("")}
             </div>`;
