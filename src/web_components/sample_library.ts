@@ -25,12 +25,16 @@ export class SampleLibrary extends HTMLElement {
     async #renderList(): Promise<void> {
         const nodes = (await proxy.list()).map(src => {
             const [, ...rest] = (decodeURI(new URL(src).pathname));
-            function dragStart(e: DragEvent) {
-                const src = (e.target as HTMLElement).dataset.src!;
-                ; e.dataTransfer?.setData("text/plain", src);
-            }
 
-            return html`<div @dragstart=${dragStart} draggable="true" slot="library" data-src="${src}">${rest.join("")}</div>`;
+            return html`
+            <div 
+                @dragstart=${(e: DragEvent) => e.dataTransfer?.setData("text/plain", src)} 
+                draggable="true" 
+                slot="library" 
+                data-src="${src}"
+            >
+                ${rest.join("")}
+            </div>`;
         });
 
         return void render(nodes, this);
