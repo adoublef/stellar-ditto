@@ -22,7 +22,7 @@ export class SampleLibrary extends HTMLElement {
         }
     };
 
-    async #list(): Promise<void> {
+    async #renderList(): Promise<void> {
         const nodes = (await proxy.list()).map(src => {
             const [, ...rest] = (decodeURI(new URL(src).pathname));
             function dragStart(e: DragEvent) {
@@ -44,7 +44,7 @@ export class SampleLibrary extends HTMLElement {
 
         this.mainSlot = this.#query("slot[name=library]");
         // listen to customEvent
-        this.#list();
+        this.#renderList();
     }
 
     #query<T extends HTMLElement>(selector: string): T {
