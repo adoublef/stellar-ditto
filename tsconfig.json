@@ -22,7 +22,18 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "paths": {
+            "~/lib/": [
+                "./src/lib/*"
+            ],
+            "~/web_components/": [
+                "./src/web_components/*"
+            ],
+            "~/workers/": [
+                "./src/workers/*"
+            ]
+        }
     },
     "include": [
         "src"
